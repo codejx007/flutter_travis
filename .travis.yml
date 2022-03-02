@@ -1,0 +1,173 @@
+jobs:
+  include:
+    - os: linux
+      language: android
+      licenses:
+        - 'android-sdk-preview-license-.+'
+        - 'android-sdk-license-.+'
+        - 'google-gdk-license-.+'
+      android:
+        components:
+          - tools
+          - platform-tools
+          - build-tools-32.0.0
+          - android-29
+          - sys-img-armeabi-v7a-google_apis-25
+          - extra-android-m2repository
+          - extra-google-m2repository
+          - extra-google-android-support
+      jdk: oraclejdk8
+      addons:
+        apt:
+          # Flutter depends on /usr/lib/x86_64-linux-gnu/libstdc++.so.6 version GLIBCXX_3.4.18
+          sources:
+            - ubuntu-toolchain-r-test # if we don't specify this, the libstdc++6 we get is the wrong version
+          packages:
+            - libstdc++6
+            - fonts-droid
+      before_script:
+        - wget https://services.gradle.org/distributions/gradle-3.5-bin.zip
+        - unzip -qq gradle-3.5-bin.zip
+        - export GRADLE_HOME=$PWD/gradle-3.5
+        - export PATH=$GRADLE_HOME/bin:$PATH
+        - git clone https://github.com/flutter/flutter.git -b stable --depth 1
+        - yes | sdkmanager "platforms;android-29"
+        - yes | sdkmanager "build-tools;28.0.3"
+      script:
+        - ./flutter/bin/flutter -v build apk
+      before_deploy:
+        # Set up git user name and tag this commit
+        - git config --local user.name "codejx007"
+        - git config --local user.email "117708402@qq.com"
+        - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
+        - git tag $TRAVIS_TAG
+      deploy:
+        provider: releases
+        skip_cleanup: true
+        token:
+          secure: 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
+        file:
+          - build/app/outputs/apk/app-release.apk
+        on:
+
+          tags: true
+    - os: osx
+      language: objective-c
+      osx_image: xcode13.2
+      before_script:
+        - brew update
+#        - brew install --HEAD libimobiledevice
+        - brew install ideviceinstaller
+        - brew install ios-deploy
+        - git clone https://github.com/flutter/flutter.git -b stable --depth 1
+      script:
+        - ./flutter/bin/flutter -v build ios --no-codesign
+      before_deploy:
+        # Set up git user name and tag this commit
+        - git config --local user.name "SunnyGirl0915"
+        - git config --local user.email "454718803@qq.com"
+        - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
+        - git tag $TRAVIS_TAG
+      deploy:
+        provider: releases
+        cleanup: false
+        # 用你的api_key替代
+        token:
+          secure: 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
+        file:
+          - app/app.ipa
+        on:
+          tags: true
+
+cache:
+  directories:
+    - $HOME/.pub-cache
+
+
+#jobs:
+#  include:
+#    -
+#      os: linux
+#      language: android
+#      licenses:
+#        - 'android-sdk-preview-license-.+'
+#        - 'android-sdk-license-.+'
+#        - 'google-gdk-license-.+'
+#      android:
+#        components:
+#          - tools
+#          - platform-tools
+#          - build-tools-32.0.0
+#          - android-29
+#          - sys-img-armeabi-v7a-google_apis-25
+#          - extra-android-m2repository
+#          - extra-google-m2repository
+#          - extra-google-android-support
+#      jdk: oraclejdk8
+#      addons:
+#        apt:
+#          # Flutter depends on /usr/lib/x86_64-linux-gnu/libstdc++.so.6 version GLIBCXX_3.4.18
+#          sources:
+#            - ubuntu-toolchain-r-test # if we don't specify this, the libstdc++6 we get is the wrong version
+#          packages:
+#            - libstdc++6
+#            - fonts-droid
+#      before_script:
+#        - wget https://services.gradle.org/distributions/gradle-3.5-bin.zip
+#        - unzip -qq gradle-3.5-bin.zip
+#        - export GRADLE_HOME=$PWD/gradle-3.5
+#        - export PATH=$GRADLE_HOME/bin:$PATH
+#        - git clone https://github.com/flutter/flutter.git -b stable --depth 1
+#        - yes | sdkmanager "platforms;android-29"
+#        - yes | sdkmanager "build-tools;28.0.3"
+#      script:
+#        - ./flutter/bin/flutter -v build apk
+#      before_deploy:
+#        # Set up git user name and tag this commit
+#        - git config --local user.name "SunnyGirl0915"
+#        - git config --local user.email "454718803@qq.com"
+#        - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
+#        - git tag $TRAVIS_TAG
+#      deploy:
+#        provider: releases
+#        cleanup: false
+#        token: ${GITHUB_TOKEN}
+#        file:
+#          - build/app/outputs/apk/app-release.apk
+#          - build/app.flx
+#        edge: true
+#        on:
+#          repo: SunnyGirl0915/flutter_demo
+#          tags: true
+#    - os: osx
+#      language: objective-c
+#      osx_image: xcode13.2
+#      before_script:
+#        - brew update
+#        #        - brew install --HEAD libimobiledevice
+#        - brew install ideviceinstaller
+#        - brew install ios-deploy
+#        - git clone https://github.com/flutter/flutter.git -b stable --depth 1
+#      script:
+#        - ./flutter/bin/flutter -v build ios --no-codesign
+#      before_deploy:
+#        # Set up git user name and tag this commit
+#        - git config --local user.name "SunnyGirl0915"
+#        - git config --local user.email "454718803@qq.com"
+#        - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
+#        - git tag $TRAVIS_TAG
+#      deploy:
+#        provider: releases
+#        cleanup: false
+#        # 用你的api_key替代
+#        api_key:
+#          secure: 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
+#        file: $APK_OUTPUT
+#        edge: true
+#        on:
+#          repo: SunnyGirl0915/flutter_demo
+#          tags: true
+#
+#cache:
+#  directories:
+#    - $HOME/.pub-cache
