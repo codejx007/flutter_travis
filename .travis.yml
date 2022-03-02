@@ -45,7 +45,7 @@ jobs:
         provider: releases
         skip_cleanup: true
         token:
-          secure: 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
+          secure: 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
         file:
           - build/app/outputs/apk/app-release.apk
         on:
@@ -70,7 +70,7 @@ jobs:
       deploy:
         provider: releases
         token:
-          secure: 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
+          secure: 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
         file:
           - app/app.ipa
         skip_cleanup: true
