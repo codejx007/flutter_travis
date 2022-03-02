@@ -63,19 +63,17 @@ jobs:
       script:
         - ./flutter/bin/flutter -v build ios --no-codesign
       before_deploy:
-        # Set up git user name and tag this commit
-        - git config --local user.name "SunnyGirl0915"
-        - git config --local user.email "454718803@qq.com"
-        - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
-        - git tag $TRAVIS_TAG
+        - mkdir app && mkdir app/Payload
+        - cp -r build/ios/iphoneos/Runner.app app/Payload
+        - pushd app && zip -r -m app.ipa Payload  && popd
+      # 将 ipa 上传至 github release
       deploy:
         provider: releases
-        cleanup: false
-        # 用你的api_key替代
         token:
           secure: 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
         file:
           - app/app.ipa
+        skip_cleanup: true
         on:
           tags: true
 
