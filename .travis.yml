@@ -48,9 +48,9 @@ jobs:
           secure: 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
         file:
           - build/app/outputs/apk/app-release.apk
-        on:
-
-          tags: true
+#        on:
+#
+#          tags: true
     - os: osx
       language: objective-c
       osx_image: xcode13.2
@@ -74,8 +74,8 @@ jobs:
         file:
           - app/app.ipa
         skip_cleanup: true
-        on:
-          tags: true
+#        on:
+#          tags: true
 
 cache:
   directories:
