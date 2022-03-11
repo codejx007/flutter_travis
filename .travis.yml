@@ -71,8 +71,8 @@ jobs:
         file:
           - app/app.ipa
          cleanup: false
-        on:
-          tags: true
+#        on:
+#          tags: true
 
 cache:
   directories:
