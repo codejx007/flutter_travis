@@ -44,7 +44,7 @@ jobs:
       deploy:
         provider: releases
         cleanup: false
-        token: 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
+        token: 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
         file:
           - build/app/outputs/apk/app-release.apk
         on:
@@ -67,7 +67,7 @@ jobs:
       # 将 ipa 上传至 github release
       deploy:
         provider: releases
-        token: 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
+        token: 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
         file:
           - app/app.ipa
          cleanup: false
